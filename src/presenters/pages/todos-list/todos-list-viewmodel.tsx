@@ -1,4 +1,8 @@
-import { todoDTO, type TodoDTO } from "@/adapters/dtos/todo-dto/todo-dto";
+import { todoDTO } from "@/adapters/dtos/todo-dto/todo-dto";
+import type {
+  TodoDTOFromApi,
+  TodoDTOToApi,
+} from "@/adapters/dtos/todo-dto/todo-dto.types";
 import { todo } from "@/domain/model/todo/todo";
 import type { Todo } from "@/domain/model/todo/todo.types";
 import type {
@@ -9,8 +13,8 @@ import { queryClient } from "@/lib/react-query/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 type TodosListViewModelDependencies = {
-  getTodosUseCase: UseCase<Promise<TodoDTO[]>>;
-  createTodoUseCase: UseCaseWithParams<Promise<TodoDTO>, Todo>;
+  getTodosUseCase: UseCase<Promise<TodoDTOFromApi[]>>;
+  createTodoUseCase: UseCaseWithParams<Promise<TodoDTOToApi>, Todo>;
 };
 
 export function useTodosListViewModel({
@@ -30,7 +34,7 @@ export function useTodosListViewModel({
       await queryClient.cancelQueries({ queryKey: ["todos"] });
 
       const newTodo = todo(todoData);
-      queryClient.setQueryData(["todos"], (oldTodos: TodoDTO[]) => [
+      queryClient.setQueryData(["todos"], (oldTodos: TodoDTOFromApi[]) => [
         ...oldTodos,
         newTodo,
       ]);
@@ -38,7 +42,7 @@ export function useTodosListViewModel({
       return { newTodo };
     },
     onSuccess: (result, _variables, context) => {
-      queryClient.setQueryData(["todos"], (oldTodos: TodoDTO[]) => {
+      queryClient.setQueryData(["todos"], (oldTodos: TodoDTOFromApi[]) => {
         const updatedTodos = oldTodos.map((oldTodo) => {
           return oldTodo.id === context.newTodo.id
             ? todoDTO.fromApi(result)
@@ -49,7 +53,7 @@ export function useTodosListViewModel({
       });
     },
     onError: (_error, _variables, context) => {
-      queryClient.setQueryData(["todos"], (oldTodos: TodoDTO[]) => {
+      queryClient.setQueryData(["todos"], (oldTodos: TodoDTOFromApi[]) => {
         const revertedTodos = oldTodos.filter((oldTodo) => {
           return oldTodo.id !== context?.newTodo.id;
         });

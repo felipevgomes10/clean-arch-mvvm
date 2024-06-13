@@ -1,10 +1,7 @@
-export type TodoDTO = {
-  id: string;
-  title: string;
-  completed: boolean;
-};
+import type { Todo } from "@/domain/model/todo/todo.types";
+import type { TodoDTOFromApi, TodoDTOToApi } from "./todo-dto.types";
 
-function fromApi(todo: TodoDTO): TodoDTO {
+function fromApi(todo: Required<Todo>): TodoDTOFromApi {
   return {
     id: todo.id,
     title: todo.title,
@@ -12,7 +9,7 @@ function fromApi(todo: TodoDTO): TodoDTO {
   };
 }
 
-function toApi(todo: TodoDTO): TodoDTO {
+function toApi(todo: Required<Todo>): TodoDTOToApi {
   return {
     id: todo.id,
     title: todo.title,
