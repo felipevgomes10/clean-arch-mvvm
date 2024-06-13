@@ -1,6 +1,6 @@
 import type { DataSource } from "@/domain/data/data-source.types";
-import type { Todo } from "@/domain/model/todo/todo.types";
 import type { TodosRepository } from "@/domain/repositories/todos-repository.types";
+import type { TodoDTO } from "../dtos/todo-dto/todo-dto";
 
 type TodosRepositoryDependencies = {
   dataSource: DataSource;
@@ -17,7 +17,7 @@ export function todosRepository({
     return dataSource.getTodo(id);
   };
 
-  const addTodo = async (todo: Todo) => {
+  const addTodo = async (todo: TodoDTO) => {
     return dataSource.addTodo(todo);
   };
 

@@ -1,5 +1,5 @@
+import type { TodoDTO } from "@/adapters/dtos/todo-dto/todo-dto";
 import type { DataSource } from "@/domain/data/data-source.types";
-import type { Todo } from "@/domain/model/todo/todo.types";
 import { api } from "@/lib/api/api";
 
 export function dataSource(): DataSource {
@@ -13,8 +13,9 @@ export function dataSource(): DataSource {
     return data;
   };
 
-  const addTodo = async (todo: Todo) => {
-    api.post("/todos", todo);
+  const addTodo = async (todo: TodoDTO) => {
+    const { data } = await api.post("/todos", todo);
+    return data;
   };
 
   const removeTodo = async (id: string) => {

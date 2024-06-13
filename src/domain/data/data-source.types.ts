@@ -1,9 +1,9 @@
-import type { Todo } from "@/domain/model/todo/todo.types";
+import type { TodoDTO } from "@/adapters/dtos/todo-dto/todo-dto";
 
 export type DataSource = {
-  getTodos: () => Promise<Todo[]>;
-  getTodo: (id: string) => Promise<Todo | null>;
-  addTodo: (todo: Todo) => Promise<void>;
+  getTodos: () => Promise<TodoDTO[]>;
+  getTodo: (id: string) => Promise<TodoDTO | null>;
+  addTodo: (todo: TodoDTO) => Promise<TodoDTO>;
   removeTodo: (id: string) => Promise<void>;
   updateTodo: (id: string) => Promise<void>;
 };

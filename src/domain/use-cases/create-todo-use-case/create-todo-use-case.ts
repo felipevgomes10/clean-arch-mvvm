@@ -8,7 +8,8 @@ export function createTodoUseCase({
   todosRepository,
 }: CreateTodoUseCaseDependencies): UseCaseWithParams<Promise<TodoDTO>, Todo> {
   return {
-    execute: (todoData: Todo) =>
-      todosRepository.addTodo(todoDTO.toApi(todo(todoData))),
+    execute: (todoData: Todo) => {
+      return todosRepository.addTodo(todoDTO.toApi(todo(todoData)));
+    },
   };
 }
