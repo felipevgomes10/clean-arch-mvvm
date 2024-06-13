@@ -1,3 +1,5 @@
+import { todoDTO, type TodoDTO } from "@/adapters/dtos/todo-dto/todo-dto";
+import { todo } from "@/domain/model/todo/todo";
 import type { Todo } from "@/domain/model/todo/todo.types";
 import type {
   UseCase,
@@ -7,8 +9,8 @@ import { queryClient } from "@/lib/react-query/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 type TodosListViewModelDependencies = {
-  getTodosUseCase: UseCase<Promise<Todo[]>>;
-  createTodoUseCase: UseCaseWithParams<Promise<void>, Todo>;
+  getTodosUseCase: UseCase<Promise<TodoDTO[]>>;
+  createTodoUseCase: UseCaseWithParams<Promise<TodoDTO>, Todo>;
 };
 
 export function useTodosListViewModel({
@@ -18,6 +20,7 @@ export function useTodosListViewModel({
   const { data: todos } = useQuery({
     queryKey: ["todos"],
     queryFn: getTodosUseCase.execute,
+    select: (todos) => todos.map(todoDTO.fromApi),
   });
 
   const { mutate: mutateTodo } = useMutation({
@@ -26,26 +29,29 @@ export function useTodosListViewModel({
     onMutate: async (todoData: Todo) => {
       await queryClient.cancelQueries({ queryKey: ["todos"] });
 
-      queryClient.setQueryData<Todo[]>(["todos"], (oldTodos = []) => [
+      const newTodo = todo(todoData);
+      queryClient.setQueryData(["todos"], (oldTodos: TodoDTO[]) => [
         ...oldTodos,
-        todoData,
+        newTodo,
       ]);
 
-      return { todoData };
+      return { newTodo };
     },
     onSuccess: (result, _variables, context) => {
-      queryClient.setQueryData(["todos"], (oldTodos: Todo[]) => {
-        const updatedTodos = oldTodos.map((todo) => {
-          return todo.id === context.todoData.id ? result : todo;
+      queryClient.setQueryData(["todos"], (oldTodos: TodoDTO[]) => {
+        const updatedTodos = oldTodos.map((oldTodo) => {
+          return oldTodo.id === context.newTodo.id
+            ? todoDTO.fromApi(result)
+            : oldTodo;
         });
 
         return updatedTodos;
       });
     },
     onError: (_error, _variables, context) => {
-      queryClient.setQueryData(["todos"], (oldTodos: Todo[]) => {
-        const revertedTodos = oldTodos.filter((oldTodos) => {
-          return oldTodos.id !== context?.todoData.id;
+      queryClient.setQueryData(["todos"], (oldTodos: TodoDTO[]) => {
+        const revertedTodos = oldTodos.filter((oldTodo) => {
+          return oldTodo.id !== context?.newTodo.id;
         });
 
         return revertedTodos;
