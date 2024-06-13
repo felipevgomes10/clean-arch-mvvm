@@ -1,0 +1,25 @@
+.container {
+  display: flex;
+  gap: 1rem;
+}
+
+.input {
+  padding: 0.5rem;
+  font-size: 1.6rem;
+  border: 0.1rem solid #ccc;
+  border-radius: 0.4rem;
+  width: 100%;
+}
+
+.button {
+  background-color: #4caf50;
+  border: none;
+  border-radius: 0.4rem;
+  color: white;
+  padding: 0.5rem 1rem;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 1.6rem;
+  cursor: pointer;
+}

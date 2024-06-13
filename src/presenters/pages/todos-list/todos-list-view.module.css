@@ -1,0 +1,9 @@
+.todosListView {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 50rem;
+  border: 0.1rem solid #333333;
+  border-radius: 0.8rem;
+  padding: 2rem;
+}
