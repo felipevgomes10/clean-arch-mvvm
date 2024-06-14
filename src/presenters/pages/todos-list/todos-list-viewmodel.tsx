@@ -101,9 +101,9 @@ export function useTodosListViewModel({
     retry: 3,
   });
 
-  const onDelete = (id: string) => {
+  const onDeleteTodo = (id: string) => {
     deleteTodo(id);
   };
 
-  return { todos, onCreateTodo, onDelete };
+  return { todos, onCreateTodo, onDeleteTodo };
 }
