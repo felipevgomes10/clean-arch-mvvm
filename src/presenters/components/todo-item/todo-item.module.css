@@ -1,0 +1,35 @@
+.todoItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 0.1rem solid #ccc;
+}
+
+.todoItemText {
+  display: inline-block;
+  font-size: 1.6rem;
+  width: 30ch;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.todoItemButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  border-radius: 0.4rem;
+}
+
+.todoItemButton[data-type="delete"] {
+  background-color: #ff0000;
+}
+
+.todoItemButton[data-type="edit"] {
+  background-color: #333333;
+}

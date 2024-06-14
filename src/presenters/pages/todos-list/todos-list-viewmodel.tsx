@@ -15,11 +15,13 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 type TodosListViewModelDependencies = {
   getTodosUseCase: UseCase<Promise<TodoDTOFromApi[]>>;
   createTodoUseCase: UseCaseWithParams<Promise<TodoDTOToApi>, Todo>;
+  removeTodoUseCase: UseCaseWithParams<Promise<void>, string>;
 };
 
 export function useTodosListViewModel({
   getTodosUseCase,
   createTodoUseCase,
+  removeTodoUseCase,
 }: TodosListViewModelDependencies) {
   const { data: todos } = useQuery({
     queryKey: ["todos"],
@@ -71,5 +73,37 @@ export function useTodosListViewModel({
     title.value = "";
   };
 
-  return { todos, createTodo };
+  const { mutate: deleteTodo } = useMutation({
+    mutationKey: ["delete-todo"],
+    mutationFn: (id: string) => removeTodoUseCase.execute(id),
+    onMutate: async (id: string) => {
+      await queryClient.cancelQueries({ queryKey: ["todos"] });
+
+      const queryData = queryClient.getQueryData<TodoDTOFromApi[]>(["todos"]);
+      const deletedTodo = queryData?.find((todo) => todo.id === id);
+
+      queryClient.setQueryData(["todos"], (oldTodos: TodoDTOFromApi[]) => {
+        const updatedTodos = oldTodos.filter((todo) => todo.id !== id);
+
+        return updatedTodos;
+      });
+
+      return { deletedTodo };
+    },
+    onError: (_error, _variables, context) => {
+      queryClient.setQueryData(["todos"], (oldTodos: TodoDTOFromApi[]) => {
+        const deletedTodo = context?.deletedTodo || {};
+        const revertedTodos = [...oldTodos, deletedTodo];
+
+        return revertedTodos;
+      });
+    },
+    retry: 3,
+  });
+
+  const onDelete = (id: string) => {
+    deleteTodo(id);
+  };
+
+  return { todos, createTodo, onDelete };
 }
