@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { Todo } from "./todo.types";
+import type { TodoModel } from "./todo-model.types";
 
 export const todoSchema = z
   .object({
@@ -20,7 +20,7 @@ export function todo({
   id,
   title,
   completed,
-}: Todo): z.output<typeof todoSchema> {
+}: TodoModel): z.output<typeof todoSchema> {
   const todo = todoSchema.parse({
     id,
     title,

@@ -9,25 +9,11 @@ type TodosRepositoryDependencies = {
 export function todosRepository({
   dataSource,
 }: TodosRepositoryDependencies): TodosRepository {
-  const getTodos = async () => {
-    return dataSource.getTodos();
-  };
-
-  const getTodo = async (id: string) => {
-    return dataSource.getTodo(id);
-  };
-
-  const addTodo = async (todo: TodoDTOToApi) => {
-    return dataSource.addTodo(todo);
-  };
-
-  const removeTodo = async (id: string) => {
-    return dataSource.removeTodo(id);
-  };
-
-  const updateTodo = async (id: string) => {
-    return dataSource.updateTodo(id);
-  };
+  const getTodos = async () => dataSource.getTodos();
+  const getTodo = async (id: string) => dataSource.getTodo(id);
+  const addTodo = async (todo: TodoDTOToApi) => dataSource.addTodo(todo);
+  const removeTodo = async (id: string) => dataSource.removeTodo(id);
+  const updateTodo = async (id: string) => dataSource.updateTodo(id);
 
   return {
     getTodos,

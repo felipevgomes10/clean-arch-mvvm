@@ -3,8 +3,8 @@ import type {
   TodoDTOFromApi,
   TodoDTOToApi,
 } from "@/adapters/dtos/todo-dto/todo-dto.types";
-import { todo } from "@/domain/model/todo/todo";
-import type { Todo } from "@/domain/model/todo/todo.types";
+import { todo } from "@/domain/models/todo-model/todo-model";
+import type { TodoModel } from "@/domain/models/todo-model/todo-model.types";
 import type {
   UseCase,
   UseCaseWithParams,
@@ -14,7 +14,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 
 type TodosListViewModelDependencies = {
   getTodosUseCase: UseCase<Promise<TodoDTOFromApi[]>>;
-  createTodoUseCase: UseCaseWithParams<Promise<TodoDTOToApi>, Todo>;
+  createTodoUseCase: UseCaseWithParams<Promise<TodoDTOToApi>, TodoModel>;
   removeTodoUseCase: UseCaseWithParams<Promise<void>, string>;
   completeTodoUseCase: UseCaseWithParams<Promise<void>, string>;
 };
@@ -33,8 +33,8 @@ export function useTodosListViewModel({
 
   const { mutate: mutateTodo } = useMutation({
     mutationKey: ["create-todos"],
-    mutationFn: (todoData: Todo) => createTodoUseCase.execute(todoData),
-    onMutate: async (todoData: Todo) => {
+    mutationFn: (todoData: TodoModel) => createTodoUseCase.execute(todoData),
+    onMutate: async (todoData: TodoModel) => {
       await queryClient.cancelQueries({ queryKey: ["todos"] });
 
       const newTodo = todo(todoData);
