@@ -66,7 +66,7 @@ export function useTodosListViewModel({
     retry: 3,
   });
 
-  const createTodo = (event: React.FormEvent<HTMLFormElement>) => {
+  const onCreateTodo = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const title = event.currentTarget["todo-title"];
     mutateTodo({ title: title.value });
@@ -105,5 +105,5 @@ export function useTodosListViewModel({
     deleteTodo(id);
   };
 
-  return { todos, createTodo, onDelete };
+  return { todos, onCreateTodo, onDelete };
 }

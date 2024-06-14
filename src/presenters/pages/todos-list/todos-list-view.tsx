@@ -5,7 +5,7 @@ import { TodosList } from "@/presenters/components/todos-list/todos-list";
 import styles from "./todos-list-view.module.css";
 
 export function TodosListView() {
-  const { todos, createTodo, onDelete } = DI(
+  const { todos, onCreateTodo, onDelete } = DI(
     DIIdentifiers.UseTodosListViewModel
   );
 
@@ -14,7 +14,7 @@ export function TodosListView() {
   return (
     <div className={styles.todosListView}>
       <TodosList todos={todos} onDelete={onDelete} />
-      <AddTodo createTodo={createTodo} />
+      <AddTodo onCreateTodo={onCreateTodo} />
     </div>
   );
 }
