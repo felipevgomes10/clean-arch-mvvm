@@ -2,11 +2,20 @@ import { TodoItem } from "../todo-item/todo-item";
 import styles from "./todos-list.module.css";
 import type { TodosListProps } from "./todos-list.types";
 
-export function TodosList({ todos, onDeleteTodo }: TodosListProps) {
+export function TodosList({
+  todos,
+  onDeleteTodo,
+  onCompleteTodo,
+}: TodosListProps) {
   return (
     <ul className={styles.list}>
       {todos.map((todo) => (
-        <TodoItem key={todo.id} todo={todo} onDeleteTodo={onDeleteTodo} />
+        <TodoItem
+          key={todo.id}
+          todo={todo}
+          onDeleteTodo={onDeleteTodo}
+          onCompleteTodo={onCompleteTodo}
+        />
       ))}
     </ul>
   );

@@ -16,12 +16,14 @@ type TodosListViewModelDependencies = {
   getTodosUseCase: UseCase<Promise<TodoDTOFromApi[]>>;
   createTodoUseCase: UseCaseWithParams<Promise<TodoDTOToApi>, Todo>;
   removeTodoUseCase: UseCaseWithParams<Promise<void>, string>;
+  completeTodoUseCase: UseCaseWithParams<Promise<void>, string>;
 };
 
 export function useTodosListViewModel({
   getTodosUseCase,
   createTodoUseCase,
   removeTodoUseCase,
+  completeTodoUseCase,
 }: TodosListViewModelDependencies) {
   const { data: todos } = useQuery({
     queryKey: ["todos"],
@@ -105,5 +107,37 @@ export function useTodosListViewModel({
     deleteTodo(id);
   };
 
-  return { todos, onCreateTodo, onDeleteTodo };
+  const { mutate: completeTodo } = useMutation({
+    mutationKey: ["complete-todo"],
+    mutationFn: (id: string) => completeTodoUseCase.execute(id),
+    onMutate: async (id: string) => {
+      await queryClient.cancelQueries({ queryKey: ["todos"] });
+
+      queryClient.setQueryData(["todos"], (oldTodos: TodoDTOFromApi[]) => {
+        const updatedTodos = oldTodos.map((todo) => {
+          return todo.id === id ? { ...todo, completed: true } : todo;
+        });
+
+        return updatedTodos;
+      });
+
+      return { id };
+    },
+    onError: (_error, _variables, context) => {
+      queryClient.setQueryData(["todos"], (oldTodos: TodoDTOFromApi[]) => {
+        const revertedTodos = oldTodos.map((todo) => {
+          return todo.id === context?.id ? { ...todo, completed: false } : todo;
+        });
+
+        return revertedTodos;
+      });
+    },
+    retry: 3,
+  });
+
+  const onCompleteTodo = (id: string) => {
+    completeTodo(id);
+  };
+
+  return { todos, onCreateTodo, onDeleteTodo, onCompleteTodo };
 }

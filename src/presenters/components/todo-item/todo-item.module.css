@@ -2,6 +2,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
   padding: 1rem;
   border-bottom: 0.1rem solid #ccc;
 }
@@ -13,6 +14,10 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.todoItemText[data-completed="true"] {
+  text-decoration: line-through;
 }
 
 .todoItemButton {
@@ -30,6 +35,11 @@
   background-color: #ff0000;
 }
 
-.todoItemButton[data-type="edit"] {
-  background-color: #333333;
+.todoItemButton[data-type="complete"] {
+  background-color: #00cd00;
+}
+
+.todoItemButton[data-type="complete"]:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
 }
