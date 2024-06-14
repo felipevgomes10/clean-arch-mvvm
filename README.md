@@ -1,4 +1,13 @@
-### Clean Architecture (CA)
+## Summary
+
+1. [Clean Architecture (CA)](#ca)
+2. [MVVM](#mvvm)
+3. [CA and MVVM](#ca-and-mvvm)
+4. [Folder structure](#folder-structure)
+5. [Breaking down a ViewModel](#breaking-down-a-viewmodel)
+
+### Clean Architecture (CA) 
+<div id="ca">
 
 Clean Architecture, by Robert C. Martin, aims to create flexible and testable software systems independent of external factors like frameworks and databases. It emphasizes principles like framework independence, testability, and UI/database independence.
 
@@ -7,6 +16,7 @@ Benefits include improved maintainability, flexibility, and testability.
 The architecture organizes software into concentric layers, with business rules at the core, followed by use cases, interface adapters, and finally frameworks and drivers. This ensures business rules remain isolated and independent.
 
 ### MVVM
+<div id="mvvm">
 
 MVVM (Model-View-ViewModel) is a software design pattern that separates the user interface (View) from the business logic (Model) using an intermediate layer (ViewModel).
 
@@ -17,6 +27,7 @@ MVVM (Model-View-ViewModel) is a software design pattern that separates the user
 MVVM improves code maintainability, reusability, and testability.
 
 ### CA and MVVM
+<div id="ca-and-mvvm">
 
 Clean Architecture and MVVM can be combined for well-structured apps. Clean Architecture layers include Entities (core rules), Use Cases (user interactions), Gateways (external communication), Adapters (data adaptation), and Presentation (UI, where MVVM fits).
 
@@ -27,6 +38,7 @@ Benefits include separation of concerns, code reusability, framework independenc
 Overall, combining Clean Architecture and MVVM is a powerful way to build robust and maintainable apps, but should be considered based on project complexity and team experience.
 
 ### Folder structure
+<div id="folder-structure">
 
 ```ts
 // src
@@ -622,6 +634,7 @@ export function Component() {
 ```
 
 ### Breaking down a ViewModel
+<div id="breaking-down-a-viewmodel">
 
 Take the following example:
 
