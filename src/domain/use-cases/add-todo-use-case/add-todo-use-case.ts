@@ -3,11 +3,11 @@ import type { TodoDTOToApi } from "@/adapters/dtos/todo-dto/todo-dto.types";
 import { todo } from "@/domain/models/todo-model/todo-model";
 import type { TodoModel } from "@/domain/models/todo-model/todo-model.types";
 import type { UseCaseWithParams } from "@/domain/use-cases/use-case.types";
-import type { CreateTodoUseCaseDependencies } from "./create-todo-use-case.types";
+import type { AddTodoUseCaseDependencies } from "./add-todo-use-case.types";
 
-export function createTodoUseCase({
+export function addTodoUseCase({
   todosRepository,
-}: CreateTodoUseCaseDependencies): UseCaseWithParams<
+}: AddTodoUseCaseDependencies): UseCaseWithParams<
   Promise<TodoDTOToApi>,
   TodoModel
 > {

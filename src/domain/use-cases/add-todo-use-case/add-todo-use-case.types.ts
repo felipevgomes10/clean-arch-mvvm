@@ -1,5 +1,5 @@
 import type { TodosRepository } from "@/domain/repositories/todos-repository.types";
 
-export type CreateTodoUseCaseDependencies = {
+export type AddTodoUseCaseDependencies = {
   todosRepository: TodosRepository;
 };

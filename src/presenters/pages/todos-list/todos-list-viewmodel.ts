@@ -14,14 +14,14 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 
 type TodosListViewModelDependencies = {
   getTodosUseCase: UseCase<Promise<TodoDTOToApi[]>>;
-  createTodoUseCase: UseCaseWithParams<Promise<TodoDTOToApi>, TodoModel>;
+  addTodoUseCase: UseCaseWithParams<Promise<TodoDTOToApi>, TodoModel>;
   removeTodoUseCase: UseCaseWithParams<Promise<void>, string>;
   completeTodoUseCase: UseCaseWithParams<Promise<void>, string>;
 };
 
 export function useTodosListViewModel({
   getTodosUseCase,
-  createTodoUseCase,
+  addTodoUseCase,
   removeTodoUseCase,
   completeTodoUseCase,
 }: TodosListViewModelDependencies) {
@@ -32,8 +32,8 @@ export function useTodosListViewModel({
   });
 
   const { mutate: mutateTodo } = useMutation({
-    mutationKey: ["create-todos"],
-    mutationFn: (todoData: TodoModel) => createTodoUseCase.execute(todoData),
+    mutationKey: ["add-todo"],
+    mutationFn: (todoData: TodoModel) => addTodoUseCase.execute(todoData),
     onMutate: async (todoData: TodoModel) => {
       await queryClient.cancelQueries({ queryKey: ["todos"] });
 
@@ -68,7 +68,7 @@ export function useTodosListViewModel({
     retry: 3,
   });
 
-  const onCreateTodo = (event: React.FormEvent<HTMLFormElement>) => {
+  const onAddTodo = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const title = event.currentTarget["todo-title"];
     mutateTodo({ title: title.value });
@@ -103,7 +103,7 @@ export function useTodosListViewModel({
     retry: 3,
   });
 
-  const onDeleteTodo = (id: string) => {
+  const onRemoveTodo = (id: string) => {
     deleteTodo(id);
   };
 
@@ -139,5 +139,10 @@ export function useTodosListViewModel({
     completeTodo(id);
   };
 
-  return { todos, onCreateTodo, onDeleteTodo, onCompleteTodo };
+  return {
+    todos,
+    onAddTodo,
+    onRemoveTodo,
+    onCompleteTodo,
+  };
 }

@@ -269,18 +269,18 @@ export type DataSource = {
 * **use-cases**: The use-cases folder are the basically the actions the final user can perform when using the application. A use-case is responsible for interacting with the available repositories, models and transforming data to the format the API expects.
 
 ```ts
-// create-todo-use-case.ts
+// add-todo-use-case.ts
 
 import { todoDTO } from "@/adapters/dtos/todo-dto/todo-dto";
 import type { TodoDTOToApi } from "@/adapters/dtos/todo-dto/todo-dto.types";
 import { todo } from "@/domain/models/todo-model/todo-model";
 import type { TodoModel } from "@/domain/models/todo-model/todo-model.types";
 import type { UseCaseWithParams } from "@/domain/use-cases/use-case.types";
-import type { CreateTodoUseCaseDependencies } from "./create-todo-use-case.types";
+import type { AddTodoUseCaseDependencies } from "./add-todo-use-case.types";
 
-export function createTodoUseCase({
+export function addTodoUseCase({
   todosRepository,
-}: CreateTodoUseCaseDependencies): UseCaseWithParams<
+}: AddTodoUseCaseDependencies): UseCaseWithParams<
   Promise<TodoDTOToApi>,
   TodoModel
 > {
@@ -320,12 +320,12 @@ import { useTodosListViewModel } from "@/presenters/pages/todos-list/todos-list-
 import styles from "./add-todo.module.css";
 
 type AddTodoProps = {
-  onCreateTodo: ReturnType<typeof useTodosListViewModel>["onCreateTodo"];
+  onAddTodo: ReturnType<typeof useTodosListViewModel>["onAddTodo"];
 };
 
-export function AddTodo({ onCreateTodo }: AddTodoProps) {
+export function AddTodo({ onAddTodo }: AddTodoProps) {
   return (
-    <form onSubmit={onCreateTodo} className={styles.container}>
+    <form onSubmit={onAddTodo} className={styles.container}>
       <input name="todo-title" className={styles.input} required />
       <button type="submit" className={styles.button}>
         Add
@@ -333,6 +333,7 @@ export function AddTodo({ onCreateTodo }: AddTodoProps) {
     </form>
   );
 }
+
 ```
 
 ```tsx
@@ -344,7 +345,7 @@ import type { TodoItemProps } from "./todo-item.types";
 
 export function TodoItem({
   todo,
-  onDeleteTodo,
+  onRemoveTodo,
   onCompleteTodo,
 }: TodoItemProps) {
   return (
@@ -366,7 +367,7 @@ export function TodoItem({
       </button>
       <button
         className={styles.todoItemButton}
-        onClick={() => onDeleteTodo(todo.id)}
+        onClick={() => onRemoveTodo(todo.id)}
         data-type="delete"
       >
         <Trash size={16} />
@@ -390,7 +391,7 @@ import { TodosList } from "@/presenters/components/todos-list/todos-list";
 import styles from "./todos-list-view.module.css";
 
 export function TodosListView() {
-  const { todos, onCreateTodo, onDeleteTodo, onCompleteTodo } = DI(
+  const { todos, onAddTodo, onRemoveTodo, onCompleteTodo } = DI(
     DIIdentifiers.UseTodosListViewModel
   );
 
@@ -400,10 +401,10 @@ export function TodosListView() {
     <div className={styles.todosListView}>
       <TodosList
         todos={todos}
-        onDeleteTodo={onDeleteTodo}
+        onRemoveTodo={onRemoveTodo}
         onCompleteTodo={onCompleteTodo}
       />
-      <AddTodo onCreateTodo={onCreateTodo} />
+      <AddTodo onAddTodo={onAddTodo} />
     </div>
   );
 }
@@ -430,14 +431,14 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 
 type TodosListViewModelDependencies = {
   getTodosUseCase: UseCase<Promise<TodoDTOToApi[]>>;
-  createTodoUseCase: UseCaseWithParams<Promise<TodoDTOToApi>, TodoModel>;
+  addTodoUseCase: UseCaseWithParams<Promise<TodoDTOToApi>, TodoModel>;
   removeTodoUseCase: UseCaseWithParams<Promise<void>, string>;
   completeTodoUseCase: UseCaseWithParams<Promise<void>, string>;
 };
 
 export function useTodosListViewModel({
   getTodosUseCase,
-  createTodoUseCase,
+  addTodoUseCase,
   removeTodoUseCase,
   completeTodoUseCase,
 }: TodosListViewModelDependencies) {
@@ -449,7 +450,7 @@ export function useTodosListViewModel({
 
   const { mutate: mutateTodo } = useMutation({
     mutationKey: ["create-todos"],
-    mutationFn: (todoData: TodoModel) => createTodoUseCase.execute(todoData),
+    mutationFn: (todoData: TodoModel) => addTodoUseCase.execute(todoData),
     onMutate: async (todoData: TodoModel) => {
       await queryClient.cancelQueries({ queryKey: ["todos"] });
 
@@ -484,7 +485,7 @@ export function useTodosListViewModel({
     retry: 3,
   });
 
-  const onCreateTodo = (event: React.FormEvent<HTMLFormElement>) => {
+  const onAddTodo = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const title = event.currentTarget["todo-title"];
     mutateTodo({ title: title.value });
@@ -519,7 +520,7 @@ export function useTodosListViewModel({
     retry: 3,
   });
 
-  const onDeleteTodo = (id: string) => {
+  const onRemoveTodo = (id: string) => {
     deleteTodo(id);
   };
 
@@ -555,7 +556,12 @@ export function useTodosListViewModel({
     completeTodo(id);
   };
 
-  return { todos, onCreateTodo, onDeleteTodo, onCompleteTodo };
+  return {
+    todos,
+    onAddTodo,
+    onRemoveTodo,
+    onCompleteTodo,
+  };
 }
 ```
 
@@ -568,8 +574,8 @@ This di folder is responsible for making dealing with dependencies easier. It `i
 
 import { todosRepository } from "@/adapters/repositories/todos-repository";
 import { dataSource } from "@/data/data-source";
+import { addTodoUseCase } from "@/domain/use-cases/add-todo-use-case/add-todo-use-case";
 import { completeTodoUseCase } from "@/domain/use-cases/complete-todo-use-case/complete-todo-use-case";
-import { createTodoUseCase } from "@/domain/use-cases/create-todo-use-case/create-todo-use-case";
 import { getTodosUseCase } from "@/domain/use-cases/get-todos-use-case/get-todos-use-case";
 import { removeTodoUseCase } from "@/domain/use-cases/remove-todo-use-case/remove-todo-use-case";
 import { useTodosListViewModel } from "@/presenters/pages/todos-list/todos-list-viewmodel";
@@ -579,7 +585,7 @@ export enum DIIdentifiers {
   TodosRepository = "todosRepository",
   DataSource = "dataSource",
   GetTodosUseCase = "getTodosUseCase",
-  CreateTodoUseCase = "createTodoUseCase",
+  AddTodoUseCase = "addTodoUseCase",
   RemoveTodoUseCase = "removeTodoUseCase",
   CompleteTodoUseCase = "completeTodoUseCase",
   UseTodosListViewModel = "useTodosListViewModel",
@@ -589,7 +595,7 @@ type DIIdentifiersMap = {
   [DIIdentifiers.TodosRepository]: ReturnType<typeof todosRepository>;
   [DIIdentifiers.DataSource]: ReturnType<typeof dataSource>;
   [DIIdentifiers.GetTodosUseCase]: ReturnType<typeof getTodosUseCase>;
-  [DIIdentifiers.CreateTodoUseCase]: ReturnType<typeof createTodoUseCase>;
+  [DIIdentifiers.AddTodoUseCase]: ReturnType<typeof addTodoUseCase>;
   [DIIdentifiers.RemoveTodoUseCase]: ReturnType<typeof removeTodoUseCase>;
   [DIIdentifiers.CompleteTodoUseCase]: ReturnType<typeof completeTodoUseCase>;
   [DIIdentifiers.UseTodosListViewModel]: ReturnType<
@@ -603,7 +609,7 @@ container.register({
   [DIIdentifiers.DataSource]: asFunction(dataSource),
   [DIIdentifiers.TodosRepository]: asFunction(todosRepository),
   [DIIdentifiers.GetTodosUseCase]: asFunction(getTodosUseCase),
-  [DIIdentifiers.CreateTodoUseCase]: asFunction(createTodoUseCase),
+  [DIIdentifiers.AddTodoUseCase]: asFunction(addTodoUseCase),
   [DIIdentifiers.RemoveTodoUseCase]: asFunction(removeTodoUseCase),
   [DIIdentifiers.CompleteTodoUseCase]: asFunction(completeTodoUseCase),
   [DIIdentifiers.UseTodosListViewModel]: asFunction(useTodosListViewModel),
@@ -651,14 +657,14 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 
 type TodosListViewModelDependencies = {
   getTodosUseCase: UseCase<Promise<TodoDTOToApi[]>>;
-  createTodoUseCase: UseCaseWithParams<Promise<TodoDTOToApi>, TodoModel>;
+  addTodoUseCase: UseCaseWithParams<Promise<TodoDTOToApi>, TodoModel>;
   removeTodoUseCase: UseCaseWithParams<Promise<void>, string>;
   completeTodoUseCase: UseCaseWithParams<Promise<void>, string>;
 };
 
 export function useTodosListViewModel({
   getTodosUseCase,
-  createTodoUseCase,
+  addTodoUseCase,
   removeTodoUseCase,
   completeTodoUseCase,
 }: TodosListViewModelDependencies) {
@@ -669,8 +675,8 @@ export function useTodosListViewModel({
   });
 
   const { mutate: mutateTodo } = useMutation({
-    mutationKey: ["create-todos"],
-    mutationFn: (todoData: TodoModel) => createTodoUseCase.execute(todoData),
+    mutationKey: ["add-todo"],
+    mutationFn: (todoData: TodoModel) => addTodoUseCase.execute(todoData),
     onMutate: async (todoData: TodoModel) => {
       await queryClient.cancelQueries({ queryKey: ["todos"] });
 
@@ -705,7 +711,7 @@ export function useTodosListViewModel({
     retry: 3,
   });
 
-  const onCreateTodo = (event: React.FormEvent<HTMLFormElement>) => {
+  const onAddTodo = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const title = event.currentTarget["todo-title"];
     mutateTodo({ title: title.value });
@@ -740,7 +746,7 @@ export function useTodosListViewModel({
     retry: 3,
   });
 
-  const onDeleteTodo = (id: string) => {
+  const onRemoveTodo = (id: string) => {
     deleteTodo(id);
   };
 
@@ -776,7 +782,12 @@ export function useTodosListViewModel({
     completeTodo(id);
   };
 
-  return { todos, onCreateTodo, onDeleteTodo, onCompleteTodo };
+  return {
+    todos,
+    onAddTodo,
+    onRemoveTodo,
+    onCompleteTodo,
+  };
 }
 ```
 
@@ -792,7 +803,7 @@ const { data: todos } = useQuery({
 });
 ```
 
-Another part of the `ViewModel` implementation is the `mutation (post request)` that's being made to create a new item. Note that the mutation is also using a use-case, in this case `createTodoUseCase.execute` and again `the request is being decoupled` from the `react-query library`.
+Another part of the `ViewModel` implementation is the `mutation (post request)` that's being made to create a new item. Note that the mutation is also using a use-case, in this case `addTodoUseCase.execute` and again `the request is being decoupled` from the `react-query library`.
 
 One thing the pay attention to in this case is that this code is using something called `optimistic UI update`. This is a strategy that `updates the UI before the request to the API succeeds (hence the optimictic)`, and when the request actually finishes and returns the new data the UI is updated again with the actual data from the API. The `onMutate` callback can be used to implement this logic as it runs before that request has finished (check the implementation in the example below). To replace the optimistic data for the actual data from the API the `onSuccess` callback comes into play as it runs only after the request has finished and succeeded. Plus, if the request fails for some reason the `onError` callback can be used to delete the optimistic data from the query data.
 
@@ -800,8 +811,8 @@ After all the steps mentioned above the only thing left to do is to `use the mut
 
 ```ts
 const { mutate: mutateTodo } = useMutation({
-  mutationKey: ["create-todos"],
-  mutationFn: (todoData: TodoModel) => createTodoUseCase.execute(todoData),
+  mutationKey: ["add-todo"],
+  mutationFn: (todoData: TodoModel) => addTodoUseCase.execute(todoData),
   onMutate: async (todoData: TodoModel) => {
     await queryClient.cancelQueries({ queryKey: ["todos"] });
 
@@ -836,7 +847,7 @@ const { mutate: mutateTodo } = useMutation({
   retry: 3,
 });
 
-const onCreateTodo = (event: React.FormEvent<HTMLFormElement>) => {
+const onAddTodo = (event: React.FormEvent<HTMLFormElement>) => {
   event.preventDefault();
   const title = event.currentTarget["todo-title"];
   mutateTodo({ title: title.value });

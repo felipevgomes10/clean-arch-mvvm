@@ -4,7 +4,7 @@ import type { TodoItemProps } from "./todo-item.types";
 
 export function TodoItem({
   todo,
-  onDeleteTodo,
+  onRemoveTodo,
   onCompleteTodo,
 }: TodoItemProps) {
   return (
@@ -26,7 +26,7 @@ export function TodoItem({
       </button>
       <button
         className={styles.todoItemButton}
-        onClick={() => onDeleteTodo(todo.id)}
+        onClick={() => onRemoveTodo(todo.id)}
         data-type="delete"
       >
         <Trash size={16} />

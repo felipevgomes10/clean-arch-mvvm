@@ -4,7 +4,7 @@ import type { TodosListProps } from "./todos-list.types";
 
 export function TodosList({
   todos,
-  onDeleteTodo,
+  onRemoveTodo,
   onCompleteTodo,
 }: TodosListProps) {
   return (
@@ -13,7 +13,7 @@ export function TodosList({
         <TodoItem
           key={todo.id}
           todo={todo}
-          onDeleteTodo={onDeleteTodo}
+          onRemoveTodo={onRemoveTodo}
           onCompleteTodo={onCompleteTodo}
         />
       ))}

@@ -2,12 +2,12 @@ import { useTodosListViewModel } from "@/presenters/pages/todos-list/todos-list-
 import styles from "./add-todo.module.css";
 
 type AddTodoProps = {
-  onCreateTodo: ReturnType<typeof useTodosListViewModel>["onCreateTodo"];
+  onAddTodo: ReturnType<typeof useTodosListViewModel>["onAddTodo"];
 };
 
-export function AddTodo({ onCreateTodo }: AddTodoProps) {
+export function AddTodo({ onAddTodo }: AddTodoProps) {
   return (
-    <form onSubmit={onCreateTodo} className={styles.container}>
+    <form onSubmit={onAddTodo} className={styles.container}>
       <input name="todo-title" className={styles.input} required />
       <button type="submit" className={styles.button}>
         Add
