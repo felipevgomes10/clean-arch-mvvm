@@ -13,7 +13,7 @@ import { queryClient } from "@/lib/react-query/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 type TodosListViewModelDependencies = {
-  getTodosUseCase: UseCase<Promise<TodoDTOFromApi[]>>;
+  getTodosUseCase: UseCase<Promise<TodoDTOToApi[]>>;
   createTodoUseCase: UseCaseWithParams<Promise<TodoDTOToApi>, TodoModel>;
   removeTodoUseCase: UseCaseWithParams<Promise<void>, string>;
   completeTodoUseCase: UseCaseWithParams<Promise<void>, string>;

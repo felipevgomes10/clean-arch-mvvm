@@ -237,18 +237,16 @@ export function todo({
 ```ts
 // todo-repository.types.ts
 
-import type {
-  TodoDTOFromApi,
-  TodoDTOToApi,
-} from "@/adapters/dtos/todo-dto/todo-dto.types";
+import type { TodoDTOToApi } from "@/adapters/dtos/todo-dto/todo-dto.types";
 
 export type TodosRepository = {
-  getTodos: () => Promise<TodoDTOFromApi[]>;
-  getTodo: (id: string) => Promise<TodoDTOFromApi | null>;
-  addTodo: (todo: TodoDTOToApi) => Promise<TodoDTOFromApi>;
+  getTodos: () => Promise<TodoDTOToApi[]>;
+  getTodo: (id: string) => Promise<TodoDTOToApi | null>;
+  addTodo: (todo: TodoDTOToApi) => Promise<TodoDTOToApi>;
   removeTodo: (id: string) => Promise<void>;
   updateTodo: (id: string) => Promise<void>;
 };
+
 ```
 
 * **data**: The data folder inside domain `holds the contracts for the actual implementation of the data source`. This again is just being done so it's possible to apply the [Dependency Inversion Principle](https://en.wikipedia.org/wiki/Dependency_inversion_principle) from SOLID.
@@ -256,18 +254,16 @@ export type TodosRepository = {
 ```ts
 // data-source.types.ts
 
-import type {
-  TodoDTOFromApi,
-  TodoDTOToApi,
-} from "@/adapters/dtos/todo-dto/todo-dto.types";
+import type { TodoDTOToApi } from "@/adapters/dtos/todo-dto/todo-dto.types";
 
 export type DataSource = {
-  getTodos: () => Promise<TodoDTOFromApi[]>;
-  getTodo: (id: string) => Promise<TodoDTOFromApi | null>;
-  addTodo: (todo: TodoDTOToApi) => Promise<TodoDTOFromApi>;
+  getTodos: () => Promise<TodoDTOToApi[]>;
+  getTodo: (id: string) => Promise<TodoDTOToApi | null>;
+  addTodo: (todo: TodoDTOToApi) => Promise<TodoDTOToApi>;
   removeTodo: (id: string) => Promise<void>;
   updateTodo: (id: string) => Promise<void>;
 };
+
 ```
 
 * **use-cases**: The use-cases folder are the basically the actions the final user can perform when using the application. A use-case is responsible for interacting with the available repositories, models and transforming data to the format the API expects.
@@ -433,7 +429,7 @@ import { queryClient } from "@/lib/react-query/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 type TodosListViewModelDependencies = {
-  getTodosUseCase: UseCase<Promise<TodoDTOFromApi[]>>;
+  getTodosUseCase: UseCase<Promise<TodoDTOToApi[]>>;
   createTodoUseCase: UseCaseWithParams<Promise<TodoDTOToApi>, TodoModel>;
   removeTodoUseCase: UseCaseWithParams<Promise<void>, string>;
   completeTodoUseCase: UseCaseWithParams<Promise<void>, string>;
@@ -654,7 +650,7 @@ import { queryClient } from "@/lib/react-query/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 type TodosListViewModelDependencies = {
-  getTodosUseCase: UseCase<Promise<TodoDTOFromApi[]>>;
+  getTodosUseCase: UseCase<Promise<TodoDTOToApi[]>>;
   createTodoUseCase: UseCaseWithParams<Promise<TodoDTOToApi>, TodoModel>;
   removeTodoUseCase: UseCaseWithParams<Promise<void>, string>;
   completeTodoUseCase: UseCaseWithParams<Promise<void>, string>;
